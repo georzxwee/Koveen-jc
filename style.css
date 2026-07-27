@@ -1,0 +1,182 @@
+:root{
+    --black: #0a0a0a;
+    --white: #ffffff;
+    --gray-50: #fafafa;
+    --gray-200: #e4e4e4;
+    --gray-500: #8a8a8a;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background: var(--white);
+    color: var(--black);
+    font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    line-height: 1.5;
+}
+
+h1,h2,h3{
+    font-family: 'Playfair Display', Georgia, serif;
+    font-weight:500;
+}
+
+a{color: inherit;}
+
+.encabezado{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding:18px 6%;
+    border-bottom: 1px solid var(--black);
+    position:sticky;
+    top:0;
+    background: var(--white);
+    z-index:10;
+}
+
+.logo-link{display:block}
+.logo{height:26px; width:auto; display:block}
+nav ul{
+    display:flex;
+    list-style:none;
+    gap:26px;
+}
+nav a{
+    text-decoration:none;
+    font-size: .82rem;
+    letter-spacing: .5px;
+    text-transform:uppercase;
+    padding-bottom:3px;
+    border-bottom:1px solid transparent;
+}
+
+nav a:hover{
+    border-bottom-color: var(--black);
+}
+
+.principal{
+    text-align: center;
+    padding:100px 6% 72px;
+    border-bottom:1px solid var(--gray-200);
+}
+
+.principal h1{
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    line-height:1.2;
+    margin-bottom: 18px;
+}
+
+.principal p{
+    color: var(--gray-500);
+    max-width: 460px;
+    margin:0 auto;
+    font-size: 1rem;
+}
+
+.catalogo{padding:70px 6%}
+.catalogo:nth-of-type(even){background: var(--gray-50)}
+.catalogo h2{
+    text-align:center;
+    font-size:1.9rem;
+    margin-bottom: 40px;
+}
+
+.contenedor{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1px;
+    background:var(--gray-200);
+    border:1px solid var(--gray-200);
+    max-width: 1400px;
+    margin:0 auto;
+}
+
+.caja{
+    background: var(--white);
+    display:flex;
+    flex-direction: column;
+    position:relative;
+}
+
+.numero{
+    position:absolute;
+    top: 10px;;
+    left:10px;
+    background: var(--black);
+    color: var(--white);
+    font-size:.68rem;
+    letter-spacing:1px;
+    padding: 2px 8px;
+}
+
+.caja img{
+    width:100%;
+    aspect-ratio: 4/5;
+    object-fit:cover;
+    display:block;
+    filter: grayscale(1);
+}
+
+.info{
+    padding: 16px;
+    display:flex;
+    flex-direction: column;
+    flex:1;
+}
+
+.etiqueta{
+    font-size:.65rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    color: var(--gray-500);
+    margin-bottom: 6px;
+}
+
+.info h3{
+    font-size: .95rem;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.precio{
+    font-size: 1rem;
+    font-weight: 600;
+    margin-top:auto;
+    margin-bottom: 14px;
+}
+
+.boton{
+    display:block;
+    text-align:center;
+    border: 1px solid var (--black);
+    padding: 9px;
+    text-decoration:none;
+    font-size:.78rem;
+    letter-spacing:1px;
+    text-transform:uppercase;
+    transition: background .2s, color .2s;
+}
+
+.boton:hover{
+    background: var(--black);
+    color: var(--white);
+}
+
+footer{
+    text-align:center;
+    padding: 50px 6%;
+    border-top: 1px solid var(--black);
+}
+.logo-footer{height: 20px; margin-bottom: 14px;}
+footer p{color: var(--gray-500); font-size:.8rem;}
+
+
+@media(max-width: 640px){
+    .encabezado{flex-direction:column; gap:12px; padding:16px 6%}
+    nav ul{gap: 16px}
+    .principal{padding: 70px 6% 5cqi}
+}
