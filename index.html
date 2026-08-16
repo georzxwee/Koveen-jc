@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +21,9 @@
                 <li><a href="#Calzado">Calzado</a></li>
             </ul>
         </nav>
+        <button id="btn-abrir-carrito" class="btn-carrito" type="button">
+            Carrito <span id="contador-carrito">0</span>
+        </button>
     </header>
 
     <section class="principal" id="inicio">
@@ -81,5 +84,50 @@
     <p>&copy;2026 Koveen. Moda Sostenible para Latinoamerica.</p>
     <p>Todos los derechos reservados.</p>
 </footer>
+
+<div id="panel-carrito" class="oanel-carrito" hidden>
+    <div id="carrito-fondo" class="carrito-fondo"></div>
+    <div class="carrito-caja">
+        <button id="btn-cerrar-carrito" class="btn-cerrar-carrito" type="button" aria-label="Cerrar carrito">&times;</button>
+    
+    <div id="vista-carrito">
+        <h2>Tu Carrito</h2>
+        <div id="lista-carrito">
+            <p class="carrito-vacio">Tu carrito está vacío.</p>
+        </div>
+        <input id="input-cupon" type="text" placeholder="Codigo de descuento">
+        <div class="carrito-totales">
+            <p><span>Subtotal</span><span id="texto-subtotal">$0</span></p>
+            <p id="fila-descuento" hidden><span>Descuento</span><span id="texto-descuento">-$0</span></p>
+            <p class="carrito-total-final"><span>Total</span><span id="texto-total">$0</span></p>
+        </div>
+        <button id="btn-finalizar" class="boton" type="button">Finalizar Compra</button>
+        </div>
+
+        <form id="vista-checkout" hidden>
+            <h2>Datos de Envío</h2>
+            <label>Nombre completo
+                <input type="text" id="campo-nombre" name="nombre" required>
+            </label>
+            <label>Telefono
+                <input type="tel" id="campo-telefono" name="telefono" required>
+            </label>
+            <label>Direccion de entrega
+                <input type="text" id="campo-direccion" name="direccion" required>
+            </label>
+            <p class="carrito-total-final"><span>Total a pagar</span><span id="texto-total-checkout">$0</span></p>
+            <p id="texto-error-envio" class="error-envio" hidden></p>
+            <button type="submit" class="boton">Confirmar Pedido</button>
+            <button type="button" class="boton" id="btn-volver">Volver al Carrito</button>
+        </form>
+
+        <div id="vista-confirmacion" hidden>
+            <h2>¡Pedido Confirmado!</h2>
+            <p id="texto-confirmacion"></p>
+            <button type="button" class="boton" id="btn-volver-inicio">Seguir Comprando</button>
+        </div>
+    </div>
+</div>
+<script src="calculos.js"></script>
 </body>
 </html>
