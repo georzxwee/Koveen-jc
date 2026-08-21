@@ -87,12 +87,12 @@ function contarProductos() {
 
 /* CALCULO DE TOTALES */
 
-function calcurarTotales(codigoCupon) {
+function calcularTotales(codigoCupon) {
     let subtotalBruto= 0;
     let subtotalConDescuentoDeLinea= 0;
 
     carrito.forEach(item => {
-        const base= item.precio + item.cantidad;
+        const base= item.precio * item.cantidad;
         subtotalBruto += base;
 
         // El cliente recibirá el mejor de los descuentos, no la suma de ambos.
@@ -133,8 +133,7 @@ function renderizarCarrito() {
     }
 
     lista.innerHTML = carrito.map(item => `
-        <div class="item-carrito">
-            <div class="item-carrito" data-nombre="${item.nombre}">
+        <div class="item-carrito" data-nombre="${item.nombre}">
                 <div>
                     <p class="item-carrito-nombre">${item.nombre}</p>
                     <p class="item-carrito-precio">${formatoCOP(item.precio)} c/u</p>
@@ -150,7 +149,7 @@ function renderizarCarrito() {
 }
 
 function actualizarTotales() {
-    const codigoCupon= document.getElementById("input-cupon").ariaValueMax;
+    const codigoCupon= document.getElementById("input-cupon").value;
     const {subtotalBruto, total}= calcularTotales(codigoCupon);
     const descuento= subtotalBruto - total;
 
@@ -198,7 +197,7 @@ function mostrarVistaCarrito() {
 function mostrarVistaCheckout() {
     if (carrito.length === 0) return;
     document.getElementById("vista-carrito").hidden = true;
-    document.getElementById("vista-vheckout").hidden = false;
+    document.getElementById("vista-checkout").hidden = false;
 }
 
 async function confirmarPedido(evento) {
@@ -211,7 +210,7 @@ async function confirmarPedido(evento) {
 
     const numeroPedido= Math.floor(100000 + Math.random() * 900000);
     const codigoCupon= document.getElementById("input-cupon").value;
-    const {subtotalBruto}= calcularTotales(codigoCupon);
+    const {subtotalBruto, total}= calcularTotales(codigoCupon);
 
 
     const datos= new FormData(formulario);
@@ -250,6 +249,7 @@ async function confirmarPedido(evento) {
         errorTexto.textContent= "No se pudo enviar el pedido - revisa tu conexión e intenta de nuevo.";
         errorTexto.hidden= false;
     } finally {
+        boton.disabled= false;
         boton.textContent = "Confirmar Pedido";
     }
 }
@@ -291,7 +291,7 @@ function iniciar() {
 
 
     document.getElementById("btn-finalizar").addEventListener("click", mostrarVistaCheckout);
-    document.getElementById("btn-volver").addEventListener("click", cerrarCarrito);
+    document.getElementById("btn-volver").addEventListener("click", mostrarVistaCarrito);
     document.getElementById("btn-nueva-compra").addEventListener("click", cerrarCarrito);
 
 

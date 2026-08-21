@@ -246,7 +246,7 @@ footer p{color: var(--gray-500); font-size:.8rem;}
     border-bottom:1px solid var(--gray-200);
 }
 
-.item-carrito-nombre{font-size:.9rem; font-weight:.500;}
+.item-carrito-nombre{font-size:.9rem; font-weight:500;}
 .item-carrito-precio{font-size:.75rem; color:var(--gray-500); margin-top:2px;}
 .item-carrito-cantidad{display:flex; align-items:center; gap:8px;}
 
@@ -260,7 +260,7 @@ footer p{color: var(--gray-500); font-size:.8rem;}
     font-family:inherit;
 }
 
-.item-carrito-subtotall{font-size:.85rem; font-weight:600; min-width:80px; text-align:right;}
+.item-carrito-subtotal{font-size:.85rem; font-weight:600; min-width:80px; text-align:right;}
 
 #input-cupon{
     width:100%;
@@ -330,7 +330,7 @@ footer p{color: var(--gray-500); font-size:.8rem;}
 
 .error-envio{
     background:var(--gray-50);
-    border-left:3px solid var(--red);
+    border-left:3px solid var(--black);
     padding:10px 12px;
     font-size:.8rem;
     margin-top:12px;
