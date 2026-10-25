@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 
 const Producto = require("./models/producto");
+const Usuario = require("./models/usuario");
 
 const app = express();
 app.use(express.json());
@@ -15,10 +16,36 @@ app.use((req, res, next) => {
   next();
 });
 
+// "Portero": solo deja pasar si el correo y la clave son de un usuario guardado
+async function soloAdmin(req, res, next) {
+  const admin = await Usuario.findOne({ correo: req.headers.correo, clave: req.headers.clave });
+  if (!admin) return res.status(401).json({ error: "No autorizado" });
+  next();
+}
+
+// ---------- LOGIN ----------
+app.post("/api/login", async (req, res) => {
+  const admin = await Usuario.findOne({ correo: req.body.correo, clave: req.body.clave });
+  if (!admin) return res.status(401).json({ error: "Correo o clave incorrectos" });
+  res.json({ ok: true });
+});
+
+
+
 // ---------- PRODUCTOS ----------
 app.get("/api/productos", async (req, res) => {
   const productos = await Producto.find();
   res.json(productos);
+});
+
+app.post("/api/productos", soloAdmin, async (req, res) => {
+  const producto = await Producto.create(req.body);
+  res.json(producto);
+});
+
+app.delete("/api/productos/:id", soloAdmin, async (req, res) => {
+  await Producto.findByIdAndDelete(req.params.id);
+  res.json({ ok: true });
 });
 
 app.get("/", (req, res) => res.send("Servidor de Koveen funcionando"));
@@ -31,20 +58,11 @@ mongoose
   .then(async () => {
     console.log("Conectado a MongoDB");
 
-const cuantos = await Producto.countDocuments();
-    if (cuantos === 0) {
-      await Producto.insertMany([
-        { nombre: "Camiseta Basica", precio: 75000, categoria: "ropa", etiqueta: "Algodón Organico", imagen: "../frontend/public/images/productos/001.jpg" },
-        { nombre: "Pantalon Basico", precio: 100000, categoria: "ropa", etiqueta: "Lino Organico", imagen: "images/productos/002.jpg" },
-        { nombre: "Buzo Basico", precio: 135000, categoria: "ropa", etiqueta: "Algodón y Lino Organico", imagen: "images/productos/003.jpg" },
-        { nombre: "Buzo Basico 2", precio: 150000, categoria: "ropa", etiqueta: "Algodón y Lino Organico", imagen: "images/productos/004.jpg" },
-        { nombre: "Vestido Basico", precio: 200000, categoria: "ropa", etiqueta: "Algodón y Lino Organico", imagen: "images/productos/005.jpg" },
-        { nombre: "Accesorio Basico 1", precio: 40000, categoria: "accesorios", etiqueta: "Materiales reciclados", imagen: "images/productos/001.jpg" },
-        { nombre: "Accesorio Basico 2", precio: 55000, categoria: "accesorios", etiqueta: "Materiales reciclados", imagen: "images/productos/002.jpg" },
-        { nombre: "Calzado Basico 1", precio: 180000, categoria: "calzado", etiqueta: "Fibras naturales", imagen: "images/productos/003.jpg" },
-        { nombre: "Calzado Basico 2", precio: 210000, categoria: "calzado", etiqueta: "Fibras naturales", imagen: "images/productos/004.jpg" },
-      ]);
-      console.log("Productos de ejemplo creados");
+        // Si no hay ningún usuario, crea el administrador solo una vez, para no hacerlo manual pues
+    const cuantosUsuarios = await Usuario.countDocuments();
+    if (cuantosUsuarios === 0) {
+      await Usuario.create({ correo: "admin@koveen.com", clave: "koveen123" });
+      console.log("Administrador creado: admin@koveen.com / koveen123");
     }
 
     const PUERTO = process.env.PORT || 3000;
