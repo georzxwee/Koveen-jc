@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 
 const Producto = require("./models/producto");
 const Usuario = require("./models/usuario");
+const Mensaje = require("./models/mensaje");
+const Pedido = require("./models/pedido");
 
 const app = express();
 app.use(express.json());
@@ -48,7 +50,33 @@ app.delete("/api/productos/:id", soloAdmin, async (req, res) => {
   res.json({ ok: true });
 });
 
+
+// ---------- MENSAJES (formulario de contacto) ----------
+app.post("/api/mensajes", async (req, res) => {
+  const mensaje = await Mensaje.create(req.body);
+  res.json(mensaje);
+});
+
+app.get("/api/mensajes", soloAdmin, async (req, res) => {
+  const mensajes = await Mensaje.find();
+  res.json(mensajes);
+});
+
+
+// ---------- PEDIDOS (formulario del carrito) ----------
+app.post("/api/pedidos", async (req, res) => {
+  const pedido = await Pedido.create(req.body);
+  res.json(pedido);
+});
+
+app.get("/api/pedidos", soloAdmin, async (req, res) => {
+  const pedidos = await Pedido.find();
+  res.json(pedidos);
+});
+
 app.get("/", (req, res) => res.send("Servidor de Koveen funcionando"));
+
+
 
 // ---------- CONEXIÓN A MONGODB ----------
 const url = "mongodb+srv://georgediaztorres:Lady2012MJ@cluster0.eilffuy.mongodb.net/";
