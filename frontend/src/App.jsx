@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { API } from "./configuracion";
-import { agregarAlCarrito, contarProductos } from "./descuentos";
+import { agregarAlCarrito, cambiarCantidad, contarProductos } from "./descuentos";
 import Encabezado from "./componentes/Encabezado";
 import Tienda from "./componentes/Tienda";
+import Carrito from "./componentes/Carrito";
+import Contacto from "./componentes/Contacto";
 import Footer from "./componentes/Footer";
 
 function App() {
@@ -30,8 +32,18 @@ function App() {
       <Encabezado ir={ir} total={contarProductos(carrito)} abrirCarrito={() => setCarritoAbierto(true)} />
 
       {pagina === "tienda" && <Tienda productos={productos} agregar={(p) => setCarrito(agregarAlCarrito(carrito, p))} />}
+      {pagina === "contacto" && <Contacto />}
 
       <Footer />
+
+      {carritoAbierto && (
+        <Carrito
+          carrito={carrito}
+          cambiar={(id, cambio) => setCarrito(cambiarCantidad(carrito, id, cambio))}
+          vaciar={() => setCarrito([])}
+          cerrar={() => setCarritoAbierto(false)}
+        />
+      )}
     </>
   );
 }
