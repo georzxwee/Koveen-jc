@@ -1,84 +1,58 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 const Producto = require("./models/producto");
-const Usuario = require("./models/usuario");
 const Mensaje = require("./models/mensaje");
 const Pedido = require("./models/pedido");
+const Usuario = require("./models/usuario");
+const crearUsuario = require("./CrearUsuario");
+const iniciarSesion = require("./IniciarSesion");
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 
-// Permiso para que React pueda hablar con este servidor
-app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Content-Type, correo, clave");
-  res.header("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS");
-  if (req.method === "OPTIONS") return res.sendStatus(200);
-  next();
-});
+async function usuarioDeLaPeticion(req) {
+  const { correo, clave } = req.headers;
+  if (!correo || !clave) return null;
+  return await Usuario.findOne({ correo, clave });
+}
 
-// "Portero": solo deja pasar si el correo y la clave son de un usuario guardado
-async function soloAdmin(req, res, next) {
-  const admin = await Usuario.findOne({ correo: req.headers.correo, clave: req.headers.clave });
-  if (!admin) return res.status(401).json({ error: "No autorizado" });
+async function soloUsuario(req, res, next) {
+  const usuario = await usuarioDeLaPeticion(req);
+  if (!usuario) return res.status(401).json({ error: "Debes iniciar sesión" });
+  req.usuario = usuario;
   next();
 }
 
-// ---------- LOGIN ----------
-app.post("/api/login", async (req, res) => {
-  const admin = await Usuario.findOne({ correo: req.body.correo, clave: req.body.clave });
-  if (!admin) return res.status(401).json({ error: "Correo o clave incorrectos" });
-  res.json({ ok: true });
-});
+async function soloAdmin(req, res, next) {
+  const usuario = await usuarioDeLaPeticion(req);
+  if (!usuario || usuario.rol !== "admin") return res.status(401).json({ error: "No autorizado" });
+  next();
+}
 
+app.post("/api/registro", crearUsuario);
+app.post("/api/login", iniciarSesion);
 
-
-// ---------- PRODUCTOS ----------
-app.get("/api/productos", async (req, res) => {
-  const productos = await Producto.find();
-  res.json(productos);
-});
-
-app.post("/api/productos", soloAdmin, async (req, res) => {
-  const producto = await Producto.create(req.body);
-  res.json(producto);
-});
-
+app.get("/api/productos", async (req, res) => res.json(await Producto.find()));
+app.post("/api/productos", soloAdmin, async (req, res) => res.json(await Producto.create(req.body)));
 app.delete("/api/productos/:id", soloAdmin, async (req, res) => {
   await Producto.findByIdAndDelete(req.params.id);
   res.json({ ok: true });
 });
 
+app.post("/api/mensajes", async (req, res) => res.json(await Mensaje.create(req.body)));
+app.get("/api/mensajes", soloAdmin, async (req, res) => res.json(await Mensaje.find()));
 
-// ---------- MENSAJES (formulario de contacto) ----------
-app.post("/api/mensajes", async (req, res) => {
-  const mensaje = await Mensaje.create(req.body);
-  res.json(mensaje);
-});
-
-app.get("/api/mensajes", soloAdmin, async (req, res) => {
-  const mensajes = await Mensaje.find();
-  res.json(mensajes);
-});
-
-
-// ---------- PEDIDOS (formulario del carrito) ----------
 app.post("/api/pedidos", async (req, res) => {
-  const pedido = await Pedido.create(req.body);
-  res.json(pedido);
+  const usuario = await usuarioDeLaPeticion(req);
+  const { numero, nombre, telefono, direccion, productos, total } = req.body;
+  res.json(await Pedido.create({ numero, nombre, telefono, direccion, productos, total, correo: usuario ? usuario.correo : "" }));
 });
+app.get("/api/pedidos", soloAdmin, async (req, res) => res.json(await Pedido.find()));
+app.get("/api/mis-pedidos", soloUsuario, async (req, res) => res.json(await Pedido.find({ correo: req.usuario.correo })));
 
-app.get("/api/pedidos", soloAdmin, async (req, res) => {
-  const pedidos = await Pedido.find();
-  res.json(pedidos);
-});
-
-app.get("/", (req, res) => res.send("Servidor de Koveen funcionando"));
-
-
-
-// ---------- CONEXIÓN A MONGODB ----------
 const url = "mongodb+srv://georgediaztorres:Lady2012MJ@cluster0.eilffuy.mongodb.net/";
 
 mongoose
@@ -86,10 +60,8 @@ mongoose
   .then(async () => {
     console.log("Conectado a MongoDB");
 
-        // Si no hay ningún usuario, crea el administrador solo una vez, para no hacerlo manual pues
-    const cuantosUsuarios = await Usuario.countDocuments();
-    if (cuantosUsuarios === 0) {
-      await Usuario.create({ correo: "admin@koveen.com", clave: "koveen123" });
+    if (!(await Usuario.findOne({ rol: "admin" }))) {
+      await Usuario.create({ nombre: "Administrador", correo: "admin@koveen.com", telefono: "3000000000", clave: "koveen123", rol: "admin" });
       console.log("Administrador creado: admin@koveen.com / koveen123");
     }
 
