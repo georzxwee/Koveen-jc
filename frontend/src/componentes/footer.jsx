@@ -1,4 +1,4 @@
-function footer() {
+function Footer() {
   return (
     <footer>
       <img src="images/logos/logo.png" alt="Koveen" className="logo-footer" />
@@ -8,4 +8,4 @@ function footer() {
   );
 }
 
-export default footer;
+export default Footer;
