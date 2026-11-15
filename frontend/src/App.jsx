@@ -1,12 +1,22 @@
-import { useState } from "react";
-import { contarProductos } from "./descuentos";
+import { useState, useEffect } from "react";
+import { API } from "./configuracion";
+import { agregarAlCarrito, contarProductos } from "./descuentos";
 import Encabezado from "./componentes/Encabezado";
+import Tienda from "./componentes/Tienda";
 import Footer from "./componentes/Footer";
 
 function App() {
   const [pagina, setPagina] = useState("tienda");
+  const [productos, setProductos] = useState([]);
   const [carrito, setCarrito] = useState([]);
   const [carritoAbierto, setCarritoAbierto] = useState(false);
+
+  useEffect(() => {
+    fetch(API + "/api/productos")
+      .then((respuesta) => respuesta.json())
+      .then((datos) => setProductos(datos))
+      .catch(() => alert("No se pudo conectar con el servidor"));
+  }, []);
 
   function ir(e, destino, seccion) {
     e.preventDefault();
@@ -18,6 +28,9 @@ function App() {
   return (
     <>
       <Encabezado ir={ir} total={contarProductos(carrito)} abrirCarrito={() => setCarritoAbierto(true)} />
+
+      {pagina === "tienda" && <Tienda productos={productos} agregar={(p) => setCarrito(agregarAlCarrito(carrito, p))} />}
+
       <Footer />
     </>
   );
