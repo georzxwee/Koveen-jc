@@ -1,1 +1,1 @@
-export const API = "https://koveen-backend.onrender.com/";
+export const API = "https://koveen-backend.onrender.com";
